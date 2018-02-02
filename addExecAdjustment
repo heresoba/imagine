@@ -1,0 +1,24 @@
+  function uploadExecAdjustment(inputs, tradeObj) {
+
+    var settleCurr = inputs['Settlement Currency'] || inputs['Float Leg Index'].substr(0, 3);
+    var tradeAdj = {};
+    tradeAdj['addExecAdjustment'] = 1;
+    //tradeAdj['ea_exec_id'] = tradeObj['execId']
+    if (inputs['Fee Amount']) {
+        tradeAdj['ea_detail_id'] = 10000004;
+        tradeAdj['broker_code'] = inputs['Fee Broker'];
+        tradeAdj['ea_amount'] = inputs['Fee Amount'];
+        //tradeObj['ea_xrate']  = inputs['Fee Xrate'] || 1; 
+        tradeAdj['ea_settle_date'] = inputs['Fee Settle Date'];
+
+        if (inputs['Fee Curr'] == settleCurr || inputs['Fee Curr'] == null) {
+            tradeAdj['ea_ccy'] = settleCurr;
+            tradeAdj['ea_xrate'] = 1;
+        } else {
+            tradeAdj['ea_ccy'] = inputs['Fee Curr'];
+            tradeAdj['ea_xrate'] = inputs['Fee Xrate'] || cc.xrate(inputs['Settlement Currency'], inputs['Fee Curr']);
+        }
+
+    }
+
+    return checkIO(ioservices.processSecurity(tradeAdj), 'addExecAdjustment');
