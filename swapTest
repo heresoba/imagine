@@ -1,0 +1,1050 @@
+'use strict';
+
+var referencedata = require( 'referencedata' );
+var cc = require( 'analytics' ).customcolumn;
+
+var utils = require( 'GF/utils' );
+
+var indexMapping = {
+    'AUD-BBR-BBSW_3M': {
+        'template': '',
+        'index': 'AUD BB',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1': 'NAU',
+        'resetOffset': 0,
+        'ovrSettle': '0D Phys',
+        'desc': 'AUD.BB.3M'
+    },
+    'AUD BBSW 3M': {
+        'template': '',
+        'index': 'AUD BB',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1': 'NAU',
+        'resetOffset': 0,
+        'ovrSettle': '0D Phys',
+        'desc': 'AUD.BB.3M'
+    },
+    'AUD-BBR-BBSW_6M': {
+        'template': '',
+        'index': 'AUD BB',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1': 'NAU',
+        'resetOffset': 0,
+        'ovrSettle': '0D Phys',
+        'desc': 'AUD.BB.6M'
+    },
+    'AUD BBSW 6M': {
+        'template': '',
+        'index': 'AUD BB',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1': 'NAU',
+        'resetOffset': 0,
+        'ovrSettle': '0D Phys',
+        'desc': 'AUD.BB.6M'
+    },
+    'CAD-BA-CDOR_1M': {
+        'template': '',
+        'index': 'CAD-BA',
+        'tenor': '1M',
+        'source': 'CDOR',
+        'holiday1': 'NCA',
+        'resetOffset': 0,
+        'ovrSettle': '0D Phys',
+        'desc': 'CAD.BA.1M'
+    },
+    'CAD CDOR 1M': {
+        'template': '',
+        'index': 'CAD-BA',
+        'tenor': '1M',
+        'source': 'CDOR',
+        'holiday1': 'NCA',
+        'resetOffset': 0,
+        'ovrSettle': '0D Phys',
+        'desc': 'CAD.BA.1M'
+    },
+    'CAD-BA-CDOR_3M': {
+        'template': '',
+        'index': 'CAD-BA',
+        'tenor': '3M',
+        'source': 'ISDD',
+        'holiday1': 'NCA',
+        'resetOffset': 0,
+        'ovrSettle': '0D Phys',
+        'desc': 'CAD.BA.3M'
+    },
+    'CAD CDOR 3M': {
+        'template': '',
+        'index': 'CAD-BA',
+        'tenor': '3M',
+        'source': 'ISDD',
+        'holiday1': 'NCA',
+        'resetOffset': 0,
+        'ovrSettle': '0D Phys',
+        'desc': 'CAD.BA.3M'
+    },
+    'CHF-LIBOR-BBA_3M': {
+        'template': '',
+        'index': 'CHF-LIBOR',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1': 'NCH',
+        'holiday2': 'LnB',
+        'resetOffset': -2,
+        'ovrSettle': '2D Phys',
+        'desc': 'CHF.LIBOR.3M'
+    },
+    'CHF LIBOR 3M': {
+        'template': '',
+        'index': 'CHF-LIBOR',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1': 'NCH',
+        'holiday2': 'LnB',
+        'resetOffset': -2,
+        'ovrSettle': '2D Phys',
+        'desc': 'CHF.LIBOR.3M'
+    },
+    'CHF-LIBOR-BBA_6M': {
+        'template': '',
+        'index': 'CHF-LIBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1': 'NCH',
+        'holiday2': 'LnB',
+        'resetOffset': -2,
+        'ovrSettle': '2D Phys',
+        'desc': 'CHF.LIBOR.6M'
+    },
+    'CHF LIBOR 6M': {
+        'template': '',
+        'index': 'CHF-LIBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1': 'NCH',
+        'holiday2': 'LnB',
+        'resetOffset': -2,
+        'ovrSettle': '2D Phys',
+        'desc': 'CHF.LIBOR.6M'
+    },
+    'CZK-PRIBOR-PRBO_3M': {
+        'template': '',
+        'index': 'CZK-PRIBOR',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1': 'PrB',
+        'resetOffset': -2,
+        'ovrSettle': '2D Phys',
+        'desc': 'CZK.PRIBOR.3M'
+    },
+    'CZK PRIBOR 3M': {
+        'template': '',
+        'index': 'CZK-PRIBOR',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1': 'PrB',
+        'resetOffset': -2,
+        'ovrSettle':'2D Phys',
+        'desc':'CZK.PRIBOR.3M'
+    },
+    'CZK-PRIBOR_PRBO_6M': {
+        'template': '',
+        'index': 'CZK-PRIBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1': 'PrB',
+        'resetOffset': -2,
+        'ovrSettle': '2D Phys',
+        'desc': 'CZK.PRIBOR.6M'
+    },
+    'CZK PRIBOR 6M': {
+        'template': '',
+        'index': 'CZK-PRIBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1': 'PrB',
+        'resetOffset': -2,
+        'ovrSettle': '2D Phys',
+        'desc': 'CZK.PRIBOR.6M'
+    },
+    'DKK CIBOR 3M': {
+        'template': '',
+        'index': 'DKK-CIBOR',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1': 'CoB',
+        'resetOffset': 0,
+        'ovrSettle': '0D Phys',
+        'desc': 'DKK.CIBOR.3M'
+    },
+    'EUR EURIBOR 1Y': {
+        'template': '',
+        'index': 'EUR-EURIBOR',
+        'tenor': '12M',
+        'source': 'Reuters',
+        'holiday1': 'Tgt',
+        'resetOffset': -2,
+        'ovrSettle': '2D Phys',
+        'desc': 'EUR.EURIBOR.12M'
+    },
+    'EURO-EURIBOR-ACT/360_1M': {
+        'template': '',
+        'index': 'EUR-EURIBOR',
+        'tenor': '1M',
+        'source': 'Reuters',
+        'holiday1': 'Tgt',
+        'resetOffset': -2,
+        'ovrSettle': '2D Phys',
+        'desc': 'EUR.EURIBOR.1M'
+    },
+    'EUR EURIBOR 1M': {
+        'template': '',
+        'index': 'EUR-EURIBOR',
+        'tenor': '1M',
+        'source': 'Reuters',
+        'holiday1': 'Tgt',
+        'resetOffset': -2,
+        'ovrSettle': '2D Phys',
+        'desc': 'EUR.EURIBOR.1M'
+    },
+    'EURO-EURIBOR-ACT/360_3M': {
+        'template': '',
+        'index': 'EUR-EURIBOR',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1': 'Tgt',
+        'resetOffset': -2,
+        'ovrSettle': '2D Phys',
+        'desc':'EUR.EURIBOR.3M'
+    },
+    'EUR EURIBOR 3M': {
+        'template': '',
+        'index': 'EUR-EURIBOR',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1': 'Tgt',
+        'resetOffset': -2,
+        'ovrSettle': '2D Phys',
+        'desc': 'EUR.EURIBOR.3M'
+    },
+    'EURO-EURIBOR-ACT/360_6M': {
+        'template': '',
+        'index': 'EUR-EURIBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1': 'Tgt',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'EUR.EURIBOR.6M'
+    },
+    'EUR EURIBOR 6M': {
+        'template': '',
+        'index': 'EUR-EURIBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1': 'Tgt',
+        'resetOffset': -2,
+        'ovrSettle': '2D Phys',
+        'desc': 'EUR.EURIBOR.6M'
+    },
+    'EURO-LIBOR-BBA_3M': {
+        'template': '',
+        'index': 'EUR-LIBOR',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1': 'Tgt',
+        'holiday2': 'LnB',
+        'resetOffset': 0,
+        'ovrSettle': '0D Phys',
+        'desc': 'EUR.LIBOR.3M'
+    },
+    'EURO-LIBOR-BBA_6M': {
+        'template': '',
+        'index': 'EUR-LIBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1': 'Tgt',
+        'holiday2': 'LnB',
+        'resetOffset': 0,
+        'ovrSettle': '0D Phys',
+        'desc': 'EUR.LIBOR.6M'
+    },
+    'GBP OVERNIGHT AVERAGE RATE': {
+        'template': '',
+        'index': 'GBP-SONIA',
+        'tenor': '1D',
+        'source': 'Reuters',
+        'holiday1': 'LnB',
+        'resetOffset': 1,
+        'ovrSettle': '1D Phys',
+        'desc': 'GBP.SONIA.1D'
+    },
+    'GBP LIBOR 1M': {
+        'template': '',
+        'index': 'GBP-LIBOR',
+        'tenor': '1M',
+        'source': 'Reuters',
+        'holiday1': 'LnB',
+        'resetOffset': 0,
+        'ovrSettle': '0D Phys',
+        'desc': 'GBP.LIBOR.1M'
+    },
+    'GBP-LIBOR-BBA_3M': {
+        'template': '',
+        'index': 'GBP-LIBOR',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1': 'LnB',
+        'resetOffset': 0,
+        'ovrSettle': '0D Phys',
+        'desc': 'GBP.LIBOR.3M'
+    },
+    'GBP LIBOR 3M': {
+        'template': '',
+        'index': 'GBP-LIBOR',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1': 'LnB',
+        'resetOffset': 0,
+        'ovrSettle': '0D Phys',
+        'desc': 'GBP.LIBOR.3M'
+    },
+    'GBP-LIBOR-BBA_6M': {
+        'template': '',
+        'index': 'GBP-LIBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1': 'LnB',
+        'resetOffset': 0,
+        'ovrSettle': '0D Phys',
+        'desc': 'GBP.LIBOR.6M'
+    },
+    'GBP LIBOR 6M': {
+        'template': '',
+        'index': 'GBP-LIBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1':'LnB',
+        'resetOffset':0,
+        'ovrSettle':'0D Phys',
+        'desc':'GBP.LIBOR.6M'
+    },
+    'HKD HIBOR HKAB 3M': {
+        'template': '',
+        'index': 'HKD-HIBOR',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1':'HKB',
+        'resetOffset':0,
+        'ovrSettle':'0D Phys',
+        'desc':'HKD.HIBOR.3M'
+    },
+    'HUF-BUBOR-REUTERS_6M': {
+        'template': '',
+        'index': 'HUF-BUBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1':'BdB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'HUF.BUBOR.6M'
+    },
+    'HUF BUBOR 6M': {
+        'template': '',
+        'index': 'HUF-BUBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1':'BdB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'HUF.BUBOR.6M'
+    },
+    'ILS-TELBOR-REUTERS_3M': {
+        'template': '',
+        'index': 'ILS-TELBOR',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1':'TAB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'ILS.TELBOR.3M'
+    },
+    'JPY-LIBOR-BBA_3M': {
+        'template': '',
+        'index': 'JPY-LIBOR',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1':'TkB',
+        'holiday2':'LnB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'JPY.LIBOR.3M'
+    },
+    'JPY LIBOR 3M': {
+        'template': '',
+        'index': 'JPY-LIBOR',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1':'TkB',
+        'holiday2':'LnB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'JPY.LIBOR.3M'
+    },
+    'JPY-LIBOR-BBA_6M': {
+        'template': '',
+        'index': 'JPY-LIBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1':'TkB',
+        'holiday2':'LnB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'JPY.LIBOR.6M'
+    },
+    'JPY LIBOR 6M': {
+        'template': '',
+        'index': 'JPY-LIBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1':'TkB',
+        'holiday2':'LnB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'JPY.LIBOR.6M'
+    },
+    'MXN-TIIE-BANXICO_28D': {
+        'template': '',
+        'index': 'MXN-TIIE',
+        'tenor': '28D',
+        'source': 'Reuters',
+        'holiday1':'MxB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'MXN.TIIE.1M'
+    },
+    'MXN TIIE 28D': {
+        'template': '',
+        'index': 'MXN-TIIE',
+        'tenor': '28D',
+        'source': 'Reuters',
+        'holiday1':'MxB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'MXN.TIIE.1M'
+    },
+    'NOK-NIBOR-NIBR_6M': {
+        'template': '',
+        'index': 'NOK-NIBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1':'OsB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'NOK.NIBOR.6M'
+    },
+    'NOK NIBOR 6M': {
+        'template': '',
+        'index': 'NOK-NIBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1':'OsB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'NOK.NIBOR.6M'
+    },
+    'NOK OIBOR 6M': {
+        'template': '',
+        'index': 'NOK-NIBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1':'OsB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'NOK.NIBOR.6M'
+    },
+    'NZD-BBR-BANK BILLS-3M': {
+        'template': '',
+        'index': 'NZD BB',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1':'NNZ',
+        'resetOffset':0,
+        'ovrSettle':'0D Phys',
+        'desc':'NZD.BB.3M'
+    },
+    'NZD BKBM 3M': {
+        'template': '',
+        'index': 'NZD BB',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1':'NNZ',
+        'resetOffset':0,
+        'ovrSettle':'0D Phys',
+        'desc':'NZD.BB.3M'
+    },
+    'PLN WIBOR 6M': {
+        'template': '',
+        'index': 'PLN-WIBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1':'WaB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'PLN.WIBOR.6M'
+    },
+    'SEK-STIBOR-RFRCBANKS_3M': {
+        'template': '',
+        'index': 'SEK-STIBOR',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1':'StB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'SEK.STIBOR.3M'
+    },
+    'SEK STIBOR 3M': {
+        'template': '',
+        'index': 'SEK-STIBOR',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1':'StB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'SEK.STIBOR.3M'
+    },
+    'SGD-SIBOR-SIBOR_6M': {
+        'template': '',
+        'index': 'SGD-SIBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1':'SiB',
+        'resetOffset':0,
+        'ovrSettle':'0D Phys',
+        'desc':'SGD.SIBOR.6M'
+    },
+    'SGD SOR 6M': {
+        'template': '',
+        'index': 'SGD-SIBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1':'SiB',
+        'resetOffset':0,
+        'ovrSettle':'0D Phys',
+        'desc':'SGD.SIBOR.6M'
+    },
+    'USD FED EFFECT OVERNIGHT': {
+        'template': '',
+        'index': 'USD-FF-H15',
+        'tenor': '1D',
+        'source': 'H.15',
+        'holiday1':'NYB',
+        'resetOffset':-1,
+        'ovrSettle':'1D Phys',
+        'desc':'USD.FFE'
+    },
+    'USD-Federal Funds-H.15': {
+        'template': '',
+        'index': 'USD-FF-H15',
+        'tenor': '1D',
+        'source': 'H.15',
+        'holiday1':'NYB',
+        'resetOffset':-1,
+        'ovrSettle':'1D Phys',
+        'desc':'USD.FFE'
+    },
+    'USD FEDFUND 3M AVG': {
+        'template': '',
+        'index': 'USD-FF-H15',
+        'tenor': '1D',
+        'source': 'H.15',
+        'holiday1':'NYB',
+        'resetOffset':-1,
+        'ovrSettle':'1D Phys',
+        'desc':'USD.FFE'
+    },
+    'USD-LIBOR-BBA_1M': {
+        'template': '',
+        'index': 'USD-LIBOR',
+        'tenor': '1M',
+        'source': 'Reuters',
+        'holiday1':'NYB',
+        'holiday2':'LnB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'USD.LIBOR.1M'
+    },
+    'USD LIBOR 1M': {
+        'template': '',
+        'index': 'USD-LIBOR',
+        'tenor': '1M',
+        'source': 'Reuters',
+        'holiday1':'NYB',
+        'holiday2':'LnB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'USD.LIBOR.1M'
+    },
+    'USD-LIBOR-BBA_3M': {
+        'template': '',
+        'index': 'USD-LIBOR',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1':'NYB',
+        'holiday2':'LnB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'USD.LIBOR.3M'
+    },
+    'USD LIBOR 3M': {
+        'template': '',
+        'index': 'USD-LIBOR',
+        'tenor': '3M',
+        'source': 'Reuters',
+        'holiday1':'NYB',
+        'holiday2':'LnB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'USD.LIBOR.3M'
+    },
+    'USD-LIBOR-BBA_6M': {
+        'template': '',
+        'index': 'USD-LIBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1':'NYB',
+        'holiday2':'LnB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'USD.LIBOR.6M'
+    },
+    'USD LIBOR 6M': {
+        'template': '',
+        'index': 'USD-LIBOR',
+        'tenor': '6M',
+        'source': 'Reuters',
+        'holiday1':'NYB',
+        'holiday2':'LnB',
+        'resetOffset':-2,
+        'ovrSettle':'2D Phys',
+        'desc':'USD.LIBOR.6M'
+    },
+    'ZAR-JIBAR-SAFEX_3M': {
+        'template': '',
+        'index': 'ZAR-JIBAR',
+        'tenor': '3M',
+        'source': 'JIBAR',
+        'holiday1':'JoB',
+        'resetOffset':0,
+        'ovrSettle':'0D Phys',
+        'desc':'ZAR.JIBAR.3M'
+    },
+    'ZAR JIBAR 3M': {
+        'template': '',
+        'index': 'ZAR-JIBAR',
+        'tenor': '3M',
+        'source': 'JIBAR',
+        'holiday1':'JoB',
+        'resetOffset':0,
+        'ovrSettle':'0D Phys',
+        'desc':'ZAR.JIBAR.3M'
+    }
+};
+
+
+// leaving this function here for future reference,
+// we might need it to get the default forecast curve for FLOAT leg swaps
+function getForecastCurve(index, tenor, indexSource, symbol, inputs) {
+    var forecastCurve = inputs['Settlement Currency'];
+    var table = referencedata.loadTable('Interest Rate Sources');
+
+    var result = table.find({
+        Index: index,
+        Term: tenor,
+        'Index Source': indexSource,
+        Symbol: symbol
+    });
+
+    if (result.rowCount) {
+        // take curve of first found result meeting search criteria
+        forecastCurve = result.getValue(0,'Default YC');
+    }
+
+    return forecastCurve;
+}
+
+function creator(inputs) {
+
+    var payLegIndex = '';
+    var payLegTenor = '';
+    var payLegSource = '';
+    var payLegHol1 = '';
+    var payLegHol2 = '';	 
+    var payLegHol3 ='';
+    var payLegHol4 = '';
+    var payLegHol5 = '';    
+    var payLegResetOffset = '';
+    var payLegOvrSettle = '';
+    var payLegCurveSettleRule = '';
+    var payLegMmixDesc = '';
+
+    var rcvLegIndex = '';
+    var rcvLegTenor = '';
+    var rcvLegSource = '';
+    var rcvLegHol1 = '';
+    var rcvLegHol2 = ''; 
+    var rcvLegHol3 = '';
+    var rcvLegHol4 = '';
+    var rcvLegHol5 = '';
+    var rcvLegResetOffset = '';
+    var rcvLegOvrSettle = '';
+    var rcvLegCurveSettleRule = '';
+    var rcvLegMmixDesc = '';
+    
+    //Basic Swap
+    /*
+    if (inputs['Pay Leg Index'] !== '' && inputs['Rcv Leg Index'] !== '') { // FLOATFLOAT
+        if (indexMapping[inputs['Pay Leg Index']] !== undefined) {
+            payLegIndex           = indexMapping[inputs['Pay Leg Index']]['index'];
+            payLegTenor           = indexMapping[inputs['Pay Leg Index']]['tenor'];
+            payLegSource          = indexMapping[inputs['Pay Leg Index']]['source'];
+            payLegHol1            = indexMapping[inputs['Pay Leg Index']]['holiday1'];
+            payLegResetOffset     = indexMapping[inputs['Pay Leg Index']]['resetOffset'];
+            payLegOvrSettle       = indexMapping[inputs['Pay Leg Index']]['ovrSettle'];
+            payLegCurveSettleRule = indexMapping[inputs['Pay Leg Index']]['ovrSettle'];
+            payLegMmixDesc        = indexMapping[inputs['Pay Leg Index']]['desc'];
+
+            if (indexMapping[inputs['Pay Leg Index']]['holiday2'] !== undefined) {
+                payLegHol2 = indexMapping[inputs['Pay Leg Index']]['holiday2'];
+            }
+        }
+
+        if (indexMapping[inputs['Rcv Leg Index']] !== undefined) {
+            rcvLegIndex           = indexMapping[inputs['Rcv Leg Index']]['index'];
+            rcvLegTenor           = indexMapping[inputs['Rcv Leg Index']]['tenor'];
+            rcvLegSource          = indexMapping[inputs['Rcv Leg Index']]['source'];
+            rcvLegHol1            = indexMapping[inputs['Rcv Leg Index']]['holiday1'];
+            rcvLegResetOffset     = indexMapping[inputs['Rcv Leg Index']]['resetOffset'];
+            rcvLegOvrSettle       = indexMapping[inputs['Rcv Leg Index']]['ovrSettle'];
+            rcvLegCurveSettleRule = indexMapping[inputs['Rcv Leg Index']]['ovrSettle'];
+            rcvLegMmixDesc        = indexMapping[inputs['Rcv Leg Index']]['desc'];
+
+            if (indexMapping[inputs['Rcv Leg Index']]['holiday2'] !== undefined) {
+                rcvLegHol2 = indexMapping[inputs['Rcv Leg Index']]['holiday2'];
+            }
+        }
+    } else { 
+    */
+    
+    // FIXFLOAT
+        if(inputs['Pay Type']=='FLOAT' && indexMapping[inputs['Float Leg Index']] !== undefined ){
+            payLegIndex           = indexMapping[inputs['Float Leg Index']]['index'];
+            payLegTenor           = indexMapping[inputs['Float Leg Index']]['tenor'];
+            payLegSource          = indexMapping[inputs['Float Leg Index']]['source'];
+            payLegMmixDesc        = indexMapping[inputs['Float Leg Index']]['desc'];
+            payLegHol1            = indexMapping[inputs['Float Leg Index']]['holiday1'];
+            rcvLegHol1            = indexMapping[inputs['Float Leg Index']]['holiday1'];
+            payLegResetOffset     = indexMapping[inputs['Float Leg Index']]['resetOffset'];
+            rcvLegResetOffset     = indexMapping[inputs['Float Leg Index']]['resetOffset'];
+            payLegOvrSettle       = indexMapping[inputs['Float Leg Index']]['ovrSettle'];
+            rcvLegOvrSettle       = indexMapping[inputs['Float Leg Index']]['ovrSettle'];
+            payLegCurveSettleRule = indexMapping[inputs['Float Leg Index']]['ovrSettle'];
+            rcvLegCurveSettleRule = indexMapping[inputs['Float Leg Index']]['ovrSettle'];   
+            if (indexMapping[inputs['Float Leg Index']]['holiday2'] !== undefined) {
+                payLegHol2 = indexMapping[inputs['Float Leg Index']]['holiday2'];
+                rcvLegHol2 = indexMapping[inputs['Float Leg Index']]['holiday2'];
+         }		  
+            if (indexMapping[inputs['Float Leg Index']]['holiday3'] !== undefined) {
+                payLegHol3 = indexMapping[inputs['Float Leg Index']]['holiday3'];
+                rcvLegHol3 = indexMapping[inputs['Float Leg Index']]['holiday3'];
+         }         
+            if (indexMapping[inputs['Float Leg Index']]['holiday4'] !== undefined) {
+                payLegHol2 = indexMapping[inputs['Float Leg Index']]['holiday4'];
+                rcvLegHol2 = indexMapping[inputs['Float Leg Index']]['holiday4'];
+         }
+            if (indexMapping[inputs['Float Leg Index']]['holiday5'] !== undefined) {
+                payLegHol2 = indexMapping[inputs['Float Leg Index']]['holiday5'];
+                rcvLegHol2 = indexMapping[inputs['Float Leg Index']]['holiday5'];
+         }         
+       } else if (inputs['Pay Type'] !== 'FLOAT' &&
+            indexMapping[inputs['Float Leg Index']] !== undefined) {
+            rcvLegIndex           = indexMapping[inputs['Float Leg Index']]['index'];
+            rcvLegTenor           = indexMapping[inputs['Float Leg Index']]['tenor'];
+            rcvLegSource          = indexMapping[inputs['Float Leg Index']]['source'];
+            rcvLegMmixDesc        = indexMapping[inputs['Float Leg Index']]['desc'];
+            payLegHol1            = indexMapping[inputs['Float Leg Index']]['holiday1'];
+            rcvLegHol1            = indexMapping[inputs['Float Leg Index']]['holiday1'];
+            payLegResetOffset     = indexMapping[inputs['Float Leg Index']]['resetOffset'];
+            rcvLegResetOffset     = indexMapping[inputs['Float Leg Index']]['resetOffset'];
+            payLegOvrSettle       = indexMapping[inputs['Float Leg Index']]['ovrSettle'];
+            rcvLegOvrSettle       = indexMapping[inputs['Float Leg Index']]['ovrSettle'];
+            payLegCurveSettleRule = indexMapping[inputs['Float Leg Index']]['ovrSettle'];
+            rcvLegCurveSettleRule = indexMapping[inputs['Float Leg Index']]['ovrSettle'];           
+            if (indexMapping[inputs['Float Leg Index']]['holiday2'] !== undefined) {
+                payLegHol2 = indexMapping[inputs['Float Leg Index']]['holiday2'];
+                rcvLegHol2 = indexMapping[inputs['Float Leg Index']]['holiday2'];
+            }	 
+            if (indexMapping[inputs['Float Leg Index']]['holiday3'] !== undefined) {
+                payLegHol3 = indexMapping[inputs['Float Leg Index']]['holiday3'];
+                rcvLegHol3 = indexMapping[inputs['Float Leg Index']]['holiday3'];
+         }         
+            if (indexMapping[inputs['Float Leg Index']]['holiday4'] !== undefined) {
+                payLegHol2 = indexMapping[inputs['Float Leg Index']]['holiday4'];
+                rcvLegHol2 = indexMapping[inputs['Float Leg Index']]['holiday4'];
+         }
+            if (indexMapping[inputs['Float Leg Index']]['holiday5'] !== undefined) {
+                payLegHol2 = indexMapping[inputs['Float Leg Index']]['holiday5'];
+                rcvLegHol2 = indexMapping[inputs['Float Leg Index']]['holiday5'];
+         }               
+        }
+       // }
+   
+
+    var secObj = {};
+
+    secObj['UPLOAD_ACTION']             = 'I';
+    secObj['SECURITY_TYPE']             = inputs.Type;
+    secObj['SecuritySM']                = inputs['Security Name'];
+    //secObj['SM Dsym']                   = inputs['Security Name'];
+    //secObj['Long Security Name']        = inputs['Security Name'];
+    secObj['Sm Trade Settle']           = '2D Cash';
+    secObj['Swap Currency']             = inputs['Settlement Currency'];
+    secObj['Maturity']                  = utils.correctDate(inputs['Swap Maturity Date']);
+    secObj['Trade Date']                = utils.correctDate(inputs['Trade Date']) ||
+        String(cc.yymmdd(cc.calcdate()));
+    secObj['Effective Date']            = utils.correctDate(inputs['Effective Date']); 
+    // use the effective date as trade date if the trade date is after effective date
+  /*  
+    if (secObj['Effective Date'] < secObj['Trade Date']){
+    	 secObj['Trade Date']      =  secObj['Effective Date'];
+    }
+   */ 
+    secObj['Pay Currency']              = inputs['Settlement Currency'];                //Notional Curr
+    secObj['Pay Ref Notional']          = inputs['Notional'];
+    secObj['Pay Reset Offset']          = payLegResetOffset;
+    secObj['Pay Ovr Settle']            = payLegOvrSettle;
+        
+    secObj['Pay Roll Conv Menu']        = 'Mod Following';        
+    secObj['Pay Type']                  = inputs['Pay Type'];      
+    secObj['Pay Fixed Rate']  = inputs['Pay Type'] =='FIXED' ? inputs['Fix Rate'] : '';
+    secObj['Pay Index']                 = inputs['Pay Type'] == 'FLOAT' ?
+        payLegIndex : '';
+    secObj['Pay Index Term']            = inputs['Pay Type'] == 'FLOAT' ?
+        payLegTenor : '';
+    secObj['Pay Index Source']          = inputs['Pay Type'] == 'FLOAT' ?
+        payLegSource : '';
+    secObj['Pay Descr']                 = inputs['Pay Type'] == 'FLOAT' ?
+        payLegMmixDesc : '';
+	   
+    secObj['Pay Spread']                = inputs['Pay Type'] == 'FLOAT' ?
+        inputs['Float Spread'] : '';
+    secObj['Pay Curve Settle Rule Menu']= payLegCurveSettleRule;
+    secObj['Pay Forecast Curve']        = getForecastCurve(payLegIndex,
+        payLegTenor, payLegSource, payLegMmixDesc, inputs);
+    secObj['Pay Holiday Menu1']         = payLegHol1;
+    //secObj['Pay Holiday2']              = payLegHol2;	
+    secObj['Pay Holiday Menu2']         = payLegHol2;
+    secObj['Pay Holiday Menu3']         = payLegHol3;
+    secObj['Pay Holiday Menu4']         = payLegHol4;				 
+    secObj['Pay Holiday Menu5']         = payLegHol5;
+    secObj['Pay Reset Hol Menu1']       = inputs['Pay Type'] == 'FLOAT' ?
+        payLegHol1 : '';
+    secObj['Pay Reset Hol Menu2']       = inputs['Pay Type'] == 'FLOAT' ?
+        payLegHol2 : '';	  
+    secObj['Pay Reset Hol Menu3']       = inputs['Pay Type'] == 'FLOAT' ?
+        payLegHol3 : '';
+    secObj['Pay Reset Hol Menu4']       = inputs['Pay Type'] == 'FLOAT' ?
+        payLegHol4 : '';
+    secObj['Pay Reset Hol Menu5']       = inputs['Pay Type'] == 'FLOAT' ?
+        payLegHol5 : '';        
+    secObj['Rcv Currency']              = inputs['Settlement Currency'];                          //Notional Curr
+    secObj['Rcv Ref Notional']          = inputs['Notional'];
+    secObj['Rcv Reset Offset']          = rcvLegResetOffset;
+    secObj['Rcv Ovr Settle']            = rcvLegOvrSettle;         
+    secObj['Rcv Roll Conv Menu']        = 'Mod Following';
+    secObj['Rcv Type']                  = inputs['Pay Type']==='FLOAT' ? 'FIXED' : 'FLOAT';
+    secObj['Rcv Fixed Rate']            = inputs['Pay Type'] == 'FLOAT' ?
+        inputs['Fix Rate'] : '';
+    secObj['Rcv Index']                 = inputs['Pay Type'] == 'FIXED' ?
+        rcvLegIndex : '';
+    secObj['Rcv Index Term']            = inputs['Pay Type'] == 'FIXED' ?
+        rcvLegTenor : '';
+    secObj['Rcv Index Source']          = inputs['Pay Type'] == 'FIXED' ?
+        rcvLegSource : '';
+    secObj['Rcv Descr']                 = inputs['Pay Type'] == 'FIXED' ?
+        rcvLegMmixDesc : '';
+    secObj['Rcv Spread']                = inputs['Pay Type'] == 'FIXED' ?
+        inputs['Float Spread'] : '';
+    secObj['Rcv Curve Settle Rule Menu']= rcvLegCurveSettleRule;
+    secObj['Rcv Forecast Curve']        = getForecastCurve(rcvLegIndex,
+        rcvLegTenor, rcvLegSource, rcvLegMmixDesc, inputs);
+    secObj['Rcv Holiday Menu1']         = rcvLegHol1;
+    //secObj['Rcv Holiday2']              = rcvLegHol2;	   
+    secObj['Rcv Holiday Menu2']         = rcvLegHol2;
+    secObj['Rcv Holiday Menu3']         = rcvLegHol3;
+    secObj['Rcv Holiday Menu4']         = rcvLegHol4;  
+    secObj['Rcv Holiday Menu5']         = rcvLegHol5;
+    secObj['Rcv Reset Hol Menu1']       = inputs['Pay Type'] == 'FIXED' ?
+        rcvLegHol1 : '';
+    secObj['Rcv Reset Hol Menu2']       = inputs['Pay Type'] == 'FIXED' ?
+        rcvLegHol2 : '';
+    secObj['Rcv Reset Hol Menu3']       = inputs['Pay Type'] == 'FIXED' ?
+        rcvLegHol3 : '';
+    secObj['Rcv Reset Hol Menu4']       = inputs['Pay Type'] == 'FIXED' ?
+        rcvLegHol4 : '';	
+     secObj['Rcv Reset Hol Menu5']       = inputs['Pay Type'] == 'FIXED' ?
+        rcvLegHol5 : '';
+
+	 //optional sec info
+    secObj['SM Issuer']      = inputs['Issuer']; 
+    //secObj['ExpTime']  = inputs['Exp Time'] ? inputs['Exp Time'] : 1000;
+    //secObj['ExpTimeZone']           = inputs['Exp Region'] ? inputs['Exp Region'] : 'US/Eastern';		 
+    secObj["SM Dsym"]    = inputs['Mkt Symbol'] ?  inputs['Mkt Symbol'] : inputs['Security Name'];
+    secObj['Long Security Name'] = inputs['Long Sec Name'] || inputs['Security Name'];
+    secObj['Exch']                  =inputs['Exchange'] ? inputs['Exchange'] : 'AOTC'; 
+    secObj['Swap Country']  = inputs['Country'];
+    //secObj['Pay Initial Level']  = inputs['Pay Initial Level'];
+    //secObj['Rcv Initial Level']  = inputs['Rcv Initial Level'];
+	
+	secObj['Calc Agent'] = inputs['Calc Agent'];
+	secObj['SM Audit Stat']  = inputs['Audit Status'];
+	secObj['Swap Pmt Disposition'] = inputs['Payment Disposition'] ?inputs['Payment Disposition'] :'Drop When Earned';
+	secObj['Ext Sec Code']  = inputs['Ext Sec Code'];
+	
+	//FIXED Details
+	if (inputs['Pay Type'] =='FIXED'){
+	secObj['Pay Front Reference Date'] = inputs['Fix Front Stub'];
+	secObj['Pay Back Reference Date'] =inputs['Fix Back Stub'];
+	secObj['Pay Freq Cycle Dir Menu']  = inputs['Fix Cycle'];		   
+	secObj['Pay Payment Offset'] = inputs['Fix Payment Offset'];	  
+	secObj['Pay Freq Ref Unit Menu'] = inputs['Fix Payment Conv Unit'] ?  inputs['Fix Payment Conv Unit'] : 'Day';		   
+	secObj['Pay End Date Roll Conv Menu'] = inputs['Fix End Date Roll Conv'] ?    inputs['Fix End Date Roll Conv'] :'Same as Pay';
+	secObj['Pay Date Adjustment']      = inputs['Fix Payment Adj']		  
+	secObj['Pay Hol Cnv Locked'] = inputs['Fix Payment Hol Curve Lock'];		   
+	secObj['Pay Coupon Type Menu']  = inputs['Fix Coupon Type'] ?inputs['Fix Coupon Type']:'MMkt' ;
+	secObj['Pay Compounding Date Adjustment']  = inputs['Fix Reset Adj'];
+	secObj['Pay Compounding Freq Menu']  =inputs['Fix Reset Freq'] ? inputs['Fix Reset Freq']:'';		   
+	secObj['Pay Payment Freq Menu']     =  inputs['Fix Payment Freq'] ?
+         inputs['Fix Payment Freq'] : '';   		 
+    secObj['Pay Day Count Menu']        = inputs['Fix Day Count']  ? inputs['Fix Day Count'] : '';		     
+	}else{
+	secObj['Rcv Front Reference Date'] = inputs['Fix Front Stub'];
+	secObj['Rcv Back Reference Date'] =inputs['Fix Back Stub'];  
+	secObj['Rcv Freq Cycle Dir Menu']  = inputs['Fix Cycle'];		 
+	secObj['Rcv Payment Offset'] = inputs['Fix Payment Offset'];	 
+	secObj['Rcv Freq Ref Unit Menu'] = inputs['Fix Payment Conv Unit'] ?  inputs['Fix Payment Conv Unit'] : 'Day';			
+	secObj['Rcv End Date Roll Conv Menu'] = inputs['Fix End Date Roll Conv'] ?    inputs['Fix End Date Roll Conv'] :'Same as Pay';		 
+	secObj['Rcv Date Adjustment']      = inputs['Fix Payment Adj']			   
+	secObj['Rcv Hol Cnv Locked'] = inputs['Fix Payment Hol Curve Lock'];
+	secObj['Rcv Coupon Type Menu']  = inputs['Fix Coupon Type'] ?inputs['Fix Coupon Type']:'MMkt' ;	
+	secObj['Rcv Compounding Date Adjustment']  = inputs['Fix Reset Adj'];	
+	secObj['Rcv Compounding Freq Menu']  =inputs['Fix Reset Freq'] ? inputs['Fix Reset Freq']:'';		
+	secObj['Rcv Payment Freq Menu']     =  inputs['Fix Payment Freq']?  inputs['Fix Payment Freq'] : '';    
+	secObj['Rcv Day Count Menu']        =inputs['Fix Day Count'] ? inputs['Fix Day Count'] : '';	   
+	}		
+	
+	//Float Details
+	if (inputs['Pay Type']=='FLOAT'){
+	secObj['Pay Front Reference Date'] = inputs['Float Front Stub'];  
+	secObj['Pay Back Reference Date']    = inputs['Float Back Stub'];		 
+	secObj['Pay Freq Cycle Dir Menu']  = inputs['Float Cycle'];										   
+	secObj['Pay Payment Offset'] = inputs['Float Payment Offset'];	 
+	secObj['Pay Freq Ref Unit Menu'] = inputs['Float Payment Conv Unit'] ?  inputs['Float Payment Conv Unit'] : 'Day';		 
+	secObj['Pay End Date Roll Conv Menu'] = inputs['Float End Date Roll Conv'] ? inputs['Float End Date Roll Conv']  :'Same as Pay';  
+	secObj['Pay Date Adjustment'] =inputs['Float Payment Adj'];   
+	secObj['Pay Compounding Date Adjustment']  =inputs['Float Reset Adj'];		
+	secObj['Pay Multiplier Rule']    = inputs['Float Mult Rule'] ?  inputs['Float Mult Rule'] :'No'	
+	secObj['Pay Coupon Type Menu']  = inputs['Float Coupon Type'] ?inputs['Float Coupon Type']:'MMkt'  ;	 
+	secObj['Pay Reset Time']   = inputs['Float Reset Time'];		
+	secObj['Pay TimeZone']  = inputs['Float TimeZone'];	   
+	secObj['Pay Back Set Menu']  = inputs['Float Back Set Payment']  ? inputs['Float Back Set Payment'] :'No';
+	secObj['Pay Compounding Type'] = inputs['Float Reset Compound Rule'] ?   inputs['Float Reset Compound Rule'] :'Compound Flat';			
+	secObj['Pay Initial Level']  = inputs['Float Initial Level'];	
+	secObj['Pay Init Fixing Done'] =inputs['Float Fixed Date Flag'];  
+	secObj['Pay Initial Reset Date']  = inputs['Float Fixed Date'];		
+	secObj['Pay Term Flag']  = inputs['Float Enforce Index Terms'] ? inputs['Float Enforce Index Terms'] :0;				
+	secObj['Pay Hol Cnv Locked']  = inputs['Float Payment Hol Curve Lock'];	   
+	secObj['Pay Multiplier'] = inputs['Float Mult']  || null ;
+	secObj['Pay Compounding Freq Menu'] = inputs['Float Reset Freq'] ? inputs['Float Reset Freq'] : '' ; 
+	secObj['Pay Payment Freq Menu']     = inputs['Float Payment Freq'] ? inputs['Float Payment Freq'] : '';       	 
+	secObj['Pay Day Count Menu']        = inputs['Float Day Count'] ? inputs['Float Day Count'] : '';		         
+	} else{
+	secObj['Rcv Front Reference Date'] = inputs['Float Front Stub'];
+	secObj['Rcv Back Reference Date']    = inputs['Float Back Stub'];		 
+	secObj['Rcv Freq Cycle Dir Menu']  = inputs['Float Cycle'];	   
+	secObj['Rcv Payment Offset'] = inputs['Float Payment Offset'];
+	secObj['Rcv Freq Ref Unit Menu'] = inputs['Float Payment Conv Unit'] ?  inputs['Float Payment Conv Unit'] : 'Day';					   
+	secObj['Rcv End Date Roll Conv Menu'] = inputs['Float End Date Roll Conv'] ? inputs['Float End Date Roll Conv']  :'Same as Pay';		  
+	secObj['Rcv Date Adjustment'] =inputs['Float Payment Adj'];   
+	secObj['Rcv Compounding Date Adjustment']  =inputs['Float Reset Adj'];		
+	secObj['Rcv Multiplier Rule']    = inputs['Float Mult Rule'] ?  inputs['Float Mult Rule'] :'No'  
+	secObj['Rcv Coupon Type Menu']  = inputs['Float Coupon Type'] ?inputs['Float Coupon Type']:'MMkt'  ; 
+	secObj['Rcv Reset Time']   = inputs['Float Reset Time'];  
+	secObj['Rcv TimeZone']  = inputs['Float TimeZone'];	
+	secObj['Rcv Back Set Menu']  = inputs['Float Back Set Payment']  ? inputs['Float Back Set Payment'] :'No';		  
+	secObj['Rcv Compounding Type'] = inputs['Float Reset Compound Rule'] ?   inputs['Float Reset Compound Rule'] :'Compound Flat';				
+	secObj['Rcv Initial Level']  = inputs['Float Initial Level'];	   
+	secObj['Rcv Init Fixing Done'] =inputs['Float Fixed Date Flag'];
+	secObj['Rcv Initial Reset Date']  = inputs['Float Fixed Date'];	
+	secObj['Rcv Term Flag']  = inputs['Float Enforce Index Terms'] ? inputs['Float Enforce Index Terms'] :0;			
+	secObj['Rcv Hol Cnv Locked']  = inputs['Float Payment Hol Curve Lock'];	  
+	secObj['Rcv Multiplier'] = inputs['Float Mult']  || null; 		   //default as null, relay on mult rule to be yes		
+	secObj['Rcv Compounding Freq Menu'] = inputs['Float Reset Freq'] ? inputs['Float Reset Freq'] : '' ; 
+    secObj['Rcv Payment Freq Menu']     = inputs['Float Payment Freq']?
+         inputs['Float Payment Freq'] : '';     
+    secObj['Rcv Day Count Menu']        = inputs['Float Day Count'] ? inputs['Float Day Count'] : '';		      
+	}
+	 
+	
+
+	 
+	 
+    return utils.createSecurity(secObj);
+}
+
+function nameGenerator(inputs) {
+    var rate = inputs['Pay Type'] == 'FIXED' ?
+        inputs['Fix Rate'] :
+        (inputs['Pay Type'] == 'FLOAT' ? inputs['Fix Rate'] : '');
+
+    var payRec = inputs['Pay Type'] == 'FIXED' ?
+        'P_' :
+        (inputs['Pay Type'] == 'FLOAT' ? 'R_' : '');
+
+    return payRec + rate + inputs['Settlement Currency'] +
+        utils.correctDate(inputs['Effective Date']) +
+        '_' + utils.correctDate(inputs['Swap Maturity Date']);
+}
+
+function tradeCreator(inputs) {
+    var tradeObj = utils.createTradeObj(inputs);
+
+    var direction = inputs['Buy/Sell'] === "Buy" ? 1 : -1;
+
+    tradeObj['execPrice'] = 0;
+    tradeObj['execQty']   = direction;
+	
+	 // Trade section addition
+	tradeObj['ea_detail_id'] =  10000004;
+	tradeObj['broker_code'] = inputs['Fee Broker'];
+	tradeObj['ea_amount'] = inputs['Fee Amount'];
+	tradeObj['ea_ccy'] = inputs['Fee Curr'];
+	tradeObj['ea_xrate']  = inputs['Fee Xrate'];
+	tradeObj['ea_settle_date']  = inputs['Fee Settle Date'];
+	
+	
+	
+    return utils.createTrade(tradeObj);
+
+}
+
+exports.types = ['SWAP'];
+exports.creator = creator;
+exports.nameGenerator = nameGenerator;
+exports.tradeCreator = tradeCreator;
+
+
+
