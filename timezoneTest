@@ -1,0 +1,52 @@
+/*
+function getForecastCurve(index, tenor, indexSource, symbol, inputs) {
+    var forecastCurve = inputs['Settlement Currency'];
+    var table = referencedata.loadTable('Interest Rate Sources');
+
+    var result = table.find({
+        Index: index,
+        Term: tenor,
+        'Index Source': indexSource,
+        Symbol: symbol
+    });
+
+    if (result.rowCount) {
+        // take curve of first found result meeting search criteria
+        forecastCurve = result.getValue(0, 'Default YC');
+    }
+
+    return forecastCurve;
+}
+*/ 
+
+//system.out.println((new Date()).toString());		 		   
+var len = ((new Date()).toString()).substr(35,3)
+//system.out.println(len)
+
+var sec={};
+sec['Exch'] =  getTimeZone()=='EAST'? 'AOTC' :'OTC' ;
+
+function getTimeZone(){
+
+var today = new Date(); 
+var offSet = today.getTimezoneOffset()/60; 
+ var timezoneTable = referencedata.loadTable('Time Zones'); 
+ var result = timezoneTable.find({ "GMT Offset" : offSet});		  
+ var TZ = result.get('all','Time Zone Region Name');			     // return tables
+
+for(let i = 0; i < TZ.rowCount; i++){
+  var name;
+  if(TZ.getValue(i,0)=='EAST'|| TZ.getValue(i,0)=='WEST'||TZ.getValue(i,0)=='GMT'){
+   name = TZ.getValue(i,0);		 
+   break;
+   } 	 
+}
+   return name;
+}
+
+var inputs={};		
+inputs['Exchange']  ='AOTC';
+sec['Exch'] = inputs['Exchange'] || getTimeZone()=='EAST'? 'AOTC' :'OTC' ;
+
+ system.out.println(getTimeZone())	  
+ system.out.println(sec['Exch'])
