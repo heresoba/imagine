@@ -1,0 +1,142 @@
+'use strict';
+
+var cc = require('analytics').customcolumn;
+
+var utils = require('GF/utils');
+
+//security lender Qty would be negative, security borrower Qty would be positive
+var  rpTypes = {
+    'TERM_REPO': {
+        qty: -1,
+        type: 'Term Deal'
+    },
+    'TERM_REVREPO': {
+        qty: 1,
+        type: 'Term Deal'
+    },
+    'OPEN_REPO': {
+        qty: -1,
+        type: 'Open-Ended Deal'
+    },
+    'OPEN_REVREPO': {
+        qty: 1,
+        type: 'Open-Ended Deal'
+    }
+};
+
+
+//find collateral price
+function getCurrentPrice(underlying) {
+    let smDsym = '';
+    let type = '';
+    let sec = securitymaster.find( {security:underlying} );
+    while( sec.next() ) {
+        smDsym = sec["SM Dsym"];
+        type = sec.Type;
+    }
+    let mktObj = market.getMarket(smDsym);
+    let price = 0;
+    if (mktObj['close'] != 0) {
+        price = mktObj['close'];
+    } else if (mktObj['last'] != 0) {
+        price = mktObj['last'];
+    } else if (mktObj['bid'] != 0) {
+        price = mktObj['bid'];
+    } else if (['TBD', 'BND', 'IBND','FRN', 'CNV'].indexOf(type) > -1) {
+        price = 100;
+    } else {
+        throw new Error("Illegal collateral price");
+    }
+    return price;
+}
+
+
+function creator(inputs) {
+    var secObj = {};
+    var today = cc.yymmdd(cc.today())
+    secObj['UPLOAD_ACTION']    = 'I';
+    secObj['SECURITY_TYPE']    = inputs.Type || 'RP';               //RP
+    secObj["SM Dsym"]          = inputs['Security Name'];
+    secObj["SecuritySM"]       = inputs['Security Name'];
+    //    secObj["Long Security Name"]    = inputs['Security Name'];
+    secObj["SM Currency"]      = inputs['Currency'];
+    secObj["Usym"]             = inputs['Underlying'];    //Underlying Bond Symbol
+    if (inputs['Trade Date'] && inputs['Trade Date'] !== 0) {
+        secObj['Deal Date'] = utils.correctDate(inputs['Trade Date']);
+    } else {
+        secObj['Deal Date'] = today;
+    }
+    if (inputs['Settle Date'] && inputs['Settle Date'] !== 0) {
+        secObj['Deal Settle Date'] = utils.correctDate(inputs['Settle Date']);
+    } else {
+        secObj['Deal Settle Date'] = today;
+    }
+    // deal date and end date must be at least 1 day apart
+    /*if (inputs['Trade Date'] === inputs['Term Date'] && inputs['Term Date'] !== 0){
+        inputs['Term Date']     = cc.yymmdd(cc.dateAdd(inputs['Term Date'] , '1B')).toFixed(0);
+        secObj['Deal End Date']     = utils.correctDate(inputs['Term Date']);
+    } else {
+        secObj['Deal End Date'] = cc.yymmdd(cc.dateAdd(today, '1B'))
+    }*/
+    if (inputs['Term Date'] && inputs['Term Date'] !== 0) {
+        secObj['Deal End Date'] = utils.correctDate(inputs['Term Date']);
+    } else if (inputs['Term Date'] === 0) {
+        if (rpTypes[inputs['Deal Type']]['type'] == 'Open-Ended Deal') {
+            secObj['Deal End Date'] = 0;    
+        } else {	
+            secObj['Deal End Date'] = today;
+        }
+    } else {
+        secObj['Deal End Date'] = today;
+    }
+    // secObj['Term Date']     = utils.correctDate(inputs['Term Date']);
+    secObj['Margin Currency']   = inputs['Margin Currency'];
+    secObj['Repo Event Date']   = secObj['Deal Settle Date'] +',' + secObj['Deal Settle Date'] +',' +secObj['Deal Settle Date']
+    secObj['Repo Event Type']   = '0,1,2'      // inputs['Repo Schedule'];  inputs for this is always 0, 1 ,2
+    //secObj['Repo Haircut Conv'] = 'Loan Reduction'   // inputs['Type of Repo']; // Loan reduction, collateral increase, points 
+    secObj['Repo Haircut Conv'] = inputs['Type of Repo'];
+    secObj['Haircut']           = inputs['Repo Haircut %']; // inputs['Repo Haircut %'];
+    secObj['Repo Index']        = inputs['Index'];   //for example:  LIBOR
+    secObj['Term']              = inputs['Index Term'];  // 3M, 1Y,  6M			
+    secObj['Repo Spread']  = inputs['Spread']; //bps
+    secObj['SM Audit Status']   = 'Price';
+    secObj['Repo Maturity Type']= rpTypes[inputs['Deal Type']]['type'];
+    //secObj['Haircut']           = 0; // inputs['Repo Haircut %']; 
+    if (inputs['Collateral Price'] === null ||inputs['Collateral Price'] === 0 ){
+        inputs['Collateral Price'] = getCurrentPrice(inputs['Underlying']);
+    }
+    secObj['Repo Event Val']    = inputs['Collateral Price']+ ',' + inputs['Repo Rate'] +',' + (inputs['Quantity']*rpTypes[inputs['Deal Type']]['qty']);  // repo value for corresponding dates			    
+    system.out.println('Repo Event Val: ' + secObj['Repo Event Val']);
+    system.out.println('utils.correctDate(inputs[Term Date]): ' + utils.correctDate(0));
+    system.out.println('Term Date: ' + secObj['Deal End Date']);		  
+    
+    		 //optional sec info
+    //secObj['SM Issuer']      = inputs['Issuer']; 
+    //secObj['ExpTime']  = inputs['Exp Time'] ? inputs['Exp Time'] : 1000;
+    //secObj['ExpTimeZone']           = inputs['Exp Region'] ? inputs['Exp Region'] : 'US/Eastern';		 
+    secObj["SM Dsym"]    = inputs['Mkt Symbol'] ?  inputs['Mkt Symbol'] : inputs['Security Name'];
+    secObj['Long Security Name'] = inputs['Long Sec Name'] || inputs['Security Name'];
+    //secObj['Exch']                  =inputs['Exchange'] || (utils.getTimeZone()=='EAST'? 'AOTC' :'OTC');  	
+    
+    return utils.createSecurity(secObj);
+}
+
+function nameGenerator(inputs) {
+    return inputs['Underlying'] + '_' +inputs['Trade Date'] + '.' + inputs.Type;
+}
+
+function tradeCreator(inputs) {
+    var tradeObj = utils.createTradeObj(inputs);
+
+   // var direction = inputs['Buy/Sell'] === "Buy" ? 1 : -1;
+	var direction = rpTypes[inputs['Deal Type']]['qty'];
+    tradeObj['execPrice'] = inputs['Exec Price'];
+    tradeObj['execQty']   = 1;   //initial position is obtained in the secObj['Repo Event Val'], there is no need to set execQty here. 
+
+    return utils.createTrade(tradeObj);
+}
+
+exports.types = ['RP'];
+exports.creator = creator;
+exports.nameGenerator = nameGenerator;
+exports.tradeCreator = tradeCreator;
