@@ -1,0 +1,195 @@
+'use strict';
+
+var utils = require('GF/utils');
+var securitymaster = require('securitymaster');
+var cc = require('analytics').customcolumn;									 
+var indexCRTName = '~ITS_MMIxMap';
+var indexCRT;
+
+
+if (referencedata.crts.doesTableExist(indexCRTName)) {
+    indexCRT = referencedata.crts.lookupTable(indexCRTName);
+} else {
+    throw new Error('Index mapping CRT - ' + indexCRTName + ' does not exist, please create!');
+}
+
+// the mapping object will be updated for the symbols the client trades
+// these will also be in the Worksheet list in the spreadsheet
+var indexMapping = {
+    'USD-LIBOR-BBA_3M': {
+        'index': 'USD.SB3L',
+        'timezone': 'US/Eastern', 
+        'effDateDefault': '2D'
+    },
+    'EURO-EURIBOR-ACT/360_3M': {
+        'index': 'EUR.AB3EUR',
+        'timezone': 'GB-Eire', 
+        'effDateDefault': '1D'
+    },
+    'EURO-EURIBOR-ACT/360_6M': {
+        'index': 'EUR.AB6E',
+        'timezone': 'GB-Eire', 
+        'effDateDefault': '2D'
+    },
+    'EURO-LIBOR-BBA_6M': {
+        'index': 'EUR.AB6L',
+        'timezone': 'GB-Eire', 
+        'effDateDefault': '2D'
+    },
+    'GBP-LIBOR-BBA_6M': {
+        'index': 'GBP.SB6L',
+        'timezone': 'GB-Eire', 
+        'effDateDefault': '2D'
+    },
+    'ILS-TELBOR-REUTERS_3M': {
+        'index': 'ILS.AM3TEL',
+        'timezone': 'GB-Eire', 
+        'effDateDefault': '2D'
+    },
+    'ZAR-JIBAR-SAFEX_3M': {
+        'index': 'ZAR.3MJB',
+        'timezone': 'GB-Eire', 
+        'effDateDefault': '2D'
+    },
+    'KRW.QM91DCD': {
+        'index': 'KRW.QM91DCD',
+        'timezone': 'Japan', 
+        'effDateDefault': '2D'
+    },
+    'JPY.SM6L': {
+        'index': 'JPY.SM6L',
+        'timezone': 'Japan', 
+        'effDateDefault': '2D'
+    },
+    'BRL.CDI': {
+        'index': 'BRL.CDI',
+        'timezone': 'US/Eastern', 
+        'effDateDefault': '2D'
+    },
+    'AUD.SM6BB': {
+        'index': 'AUD.SM6BB',
+        'timezone': 'Australia/NSW', 
+        'effDateDefault': '2D'
+    }
+};
+
+function getIndexUnd(inputs) {
+    return indexMapping[inputs['Underlying Index']] !== undefined ?
+        indexMapping[inputs['Underlying Index']]['index'] : '';
+}
+
+function getIndexProp(inputs, property) {
+    return indexMapping[inputs['Underlying Index']] !== undefined ?
+        indexMapping[inputs['Underlying Index']][property] : '';
+}
+
+function creator(inputs) {
+    var secObj = {};
+
+    //var indexUnd = getIndexUnd(inputs);
+    //var usec = securitymaster.lookupSecurity(indexUnd);
+    var timezone = getIndexProp(inputs,'timezone');
+    var effDateDefault = getIndexProp(inputs,'effDateDefault'); 
+    var longSecName = indexUnd.substr( 0, 3 ) + '_' + inputs['Expiry'] + '_' +
+        inputs['Swap Type'].substr( 0, 1 ) + '_' + inputs['Strike'] + '_' +
+        utils.correctDate(inputs['Swap Maturity Date']) + '.' + inputs.Type;
+   
+         	 
+   	secObj['FiDeriv.expiryDateTenor']   =  "";
+   	secObj['FiMain.finalSettleIsTerm']   = 'Fixed Date';
+   	secObj['ExchTraded']   = 'No';		
+   	secObj['Symbol']                    = inputs['Security Name'];	   
+   	secObj['FiUnderlying']     = indexCRT.getValue(inputs['Underlying Index'],'SWIx');
+   	secObj['FiOptStrike']       = inputs['Strike'];		
+   	secObj['FiOptPC']       =   inputs['Swap Type'];		
+   	secObj['FiExpiryDate']              = inputs['Expiry Date'];
+   	secObj['FiMain.finalSettleTenor']                 = inputs['Maturity Date'];
+   	secObj['FiMain.effectiveDate']                  = inputs['Effective Date'];
+
+    
+   
+   //optional fields
+    secObj['Currency']         =   inputs['Currency'];
+    secObj['Country']             = inputs['Country'];	 
+    secObj['FiSettleType']        = inputs['Settlement'] || 'Cash';	  
+    secObj['FiDeriv.SettleStyle']     = inputs['Settlement Style'] || 'Par/Adjusted';
+    secObj['FiExpiryTime']              = inputs['Exp Time'];
+    secObj['FiExpiryTimeZone']        =  inputs['Exp Region'];
+    secObj['FiReset.fixingDate']           = inputs['Fixing Date'];
+    secObj['FiMain.referenceDateType']       = inputs['Nominal Date Type'] || 'Settle';
+    secObj['FiMain.referenceDate']      = inputs['Nominal Date'] || 'Effective Date';
+    secObj['FiPayoff.customForeTerm']      = inputs['Forecast Period'] || 'No Gaps';
+    secObj['FiFaceValue']      = inputs['Face Value'] || 1  ;
+    secObj['FiTradeSettleRule']       = inputs['Trade Settle'];												
+    secObj['FiExSettleRule']                 =   inputs['Exercise Settle'];
+    secObj['UscLngSecName'] = inputs['Long Sec Name'] || inputs['Security Name'];	   
+    secObj['UscAuditStatus']      =   inputs['Audit Status'];
+    secObj['FiMktSymbol']               =  inputs['Mkt Symbol'] || inputs['Security Name'];
+    secObj['FiMktQuoteType']          =   inputs['Market Quote']    || 'Basis Points';
+    secObj['ImpCashWgt']               =  inputs['ImpCash Weight'];
+    secObj['ImpCashSym']             =  inputs['ImpCash Symbol'];
+    secObj['FiFeedType']            =   inputs['ImpCash Source'];
+    
+   
+    
+    /*
+    secObj['UPLOAD_ACTION']             = 'I';
+    secObj['SECURITY_TYPE']             = inputs.Type;
+    secObj['Symbol']                    = inputs['Security Name'];
+    secObj['FiMktSymbol']               = inputs['Security Name'];
+    secObj['UscLngSecName']             = longSecName;
+    secObj['FiUnderlying']              = indexUnd;
+    secObj['Currency']                  = indexUnd.substr(0,3);
+    secObj['FiOptStrike']               = inputs['Strike'];
+    secObj['FiOptPC']                   = inputs['Swap Type'];
+    secObj['FiExpiryDate']              = utils.correctDate(inputs['Expiry']);
+    secObj['FiMain.finalSettleIsTerm']  = 'Fixed Date';
+    secObj['FiMain.finalSettleTenor']   = utils.correctDate(inputs['Swap Maturity Date']);
+    secObj['FiFaceValue']               = 1;
+    secObj['FiReset.fixingDate']        = utils.correctDate(inputs['Effective Date']) || cc.dateAdd(secObj['FiExpiryDate'], effDateDefault + 'F').toFixed(0);
+    secObj['FiMain.effectiveDate']      = utils.correctDate(inputs['Effective Date']) || cc.dateAdd(secObj['FiExpiryDate'], effDateDefault + 'F').toFixed(0);		   
+    secObj['FiMain.referenceDate']      = utils.correctDate(inputs['Effective Date']) || cc.dateAdd(secObj['FiExpiryDate'], effDateDefault + 'F').toFixed(0);
+    secObj['Country']                   = usec['Country'];
+    secObj['FiExpiryTimeZone']          = timezone;
+    secObj['FiExpiryTime']              = 1500;
+   */
+	 
+
+			 //optional sec info
+    //secObj['SM Issuer']      = inputs['Issuer']; 
+    //secObj['ExpTime']  = inputs['Exp Time'] ? inputs['Exp Time'] : 1000;
+    secObj['TZ']           = inputs['Exp Region'] ? inputs['Exp Region'] : 'US/Eastern';		 
+    //secObj["SM Dsym"]    = inputs['Mkt Symbol'] ?  inputs['Mkt Symbol'] : inputs['Security Name'];
+    secObj['UscExch']                  =inputs['Exchange'] || (utils.getTimeZone()=='EAST'? 'AOTC' :'OTC') ;  	          //hardcode as OTC
+
+    return utils.createSecurity(secObj);
+}
+
+function nameGenerator(inputs) {
+    return getIndexUnd(inputs).substr(0, 3) + '_' + inputs['Expiry'] + '_' +
+        inputs['Swap Type'].substr(0, 1) + '_' + inputs['Strike'] +
+        '.' + inputs.Type;
+}
+
+function tradeCreator(inputs) {
+    var tradeObj = utils.createTradeObj(inputs);
+	var timezone = getIndexProp(inputs,'timezone');
+	
+    var direction = inputs['Buy/Sell'] === "Buy" ? 1 : -1;
+
+    tradeObj['execQuotePrice'] = inputs['Exec Price'];
+    tradeObj['execQty']   = direction * inputs['Notional'];
+    tradeObj['hldTimeZone'] = timezone;
+    tradeObj['execSettleDt']  = utils.correctDate(inputs['Premium Settle Date']) ||
+        tradeObj['execTradeDt'];
+
+    return utils.createTrade(tradeObj);
+}
+
+exports.types = ['SWPN'];
+exports.creator = creator;
+exports.nameGenerator = nameGenerator;
+exports.tradeCreator = tradeCreator;
+
+
+
