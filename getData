@@ -1,0 +1,192 @@
+function getData() {
+
+    var data = {
+        'VSWP types': ['vSWP', 'VSWP', 'VSWP types', 'vSWP', 'VSWP'],
+        'Div Protection': ['No', 'Adj Ex-Date', 'Adj Prev (ISDA)', 'Div Protection', 'No', 'Adj Ex-Date', 'Adj Prev (ISDA)'],
+        'Buy/Sell': ['Buy', 'Sell', 'Buy/Sell', 'Buy', 'Sell'],
+        'A/E': ['American', 'European', 'A/E', 'American', 'European'],
+        'P/C': ['Put', 'Call', 'P/C', 'Put', 'Call'],
+        'Knock': ['Knock In', 'Knock Out', 'Knock', 'Knock In', 'Knock Out'],
+        'Direction': ['Up', 'Down', 'Direction', 'Up', 'Down'],
+        'Barrier Type': ['Single', 'Double', 'Barrier Type', 'Single', 'Double'],
+        'Rebate Type': ['At Knock Out', 'At Expiry', 'Rebate Type', 'At Knock Out', 'At Expiry'],
+        'Monitoring': ['Continuous', 'Expiry Only', 'Monitoring', 'Continuous', 'Expiry Only'],
+        'Touch': ['No Touch', 'One Touch', 'Touch', 'No Touch', 'One Touch'],
+        'Payout Rule': ['At Expiry', 'At Hit', 'Payout Rule', 'At Expiry', 'At Hit'],
+        'NDF?': ['Y', 'N', 'NDF?', 'Y', 'N'],
+        'Pay/Rcv Type': ['FIXED', 'FLOAT', 'Pay/Rcv Type', 'FIXED', 'FLOAT'],
+        'Pay/Rcv Leg Index': ['USD LIBOR 6M', 'AUD-BBR-BBSW_3M', 'AUD BBSW 3M', 'AUD-BBR-BBSW_6M', 'AUD BBSW 6M', 'CAD-BA-CDOR_1M', 'CAD CDOR 1M', 'CAD-BA-CDOR_3M', 'CAD CDOR 3M', 'CHF-LIBOR-BBA_3M', 'CHF LIBOR 3M', 'CHF-LIBOR-BBA_6M', 'CHF LIBOR 6M', 'CZK-PRIBOR-PRBO_3M', 'CZK PRIBOR 3M', 'CZK-PRIBOR_PRBO_6M', 'CZK PRIBOR 6M', 'DKK CIBOR 3M', 'EUR EURIBOR 1Y', 'EURO-EURIBOR-ACT/360_1M', 'EUR EURIBOR 1M', 'EURO-EURIBOR-ACT/360_3M', 'EUR EURIBOR 3M', 'EURO-EURIBOR-ACT/360_6M', 'EUR EURIBOR 6M', 'EURO-LIBOR-BBA_3M', 'EURO-LIBOR-BBA_6M', 'GBP OVERNIGHT AVERAGE RATE', 'GBP LIBOR 1M', 'GBP-LIBOR-BBA_3M', 'GBP LIBOR 3M', 'GBP-LIBOR-BBA_6M', 'GBP LIBOR 6M', 'HKD HIBOR HKAB 3M', 'HUF-BUBOR-REUTERS_6M', 'HUF BUBOR 6M', 'ILS-TELBOR-REUTERS_3M', 'Pay/Rcv Leg Index', 'USD LIBOR 6M', 'AUD-BBR-BBSW_3M', 'AUD BBSW 3M', 'AUD-BBR-BBSW_6M', 'AUD BBSW 6M', 'CAD-BA-CDOR_1M', 'CAD CDOR 1M', 'CAD-BA-CDOR_3M', 'CAD CDOR 3M', 'CHF-LIBOR-BBA_3M', 'CHF LIBOR 3M', 'CHF-LIBOR-BBA_6M', 'CHF LIBOR 6M', 'CZK-PRIBOR-PRBO_3M', 'CZK PRIBOR 3M', 'CZK-PRIBOR_PRBO_6M', 'CZK PRIBOR 6M', 'DKK CIBOR 3M', 'EUR EURIBOR 1Y', 'EURO-EURIBOR-ACT/360_1M', 'EUR EURIBOR 1M', 'EURO-EURIBOR-ACT/360_3M', 'EUR EURIBOR 3M', 'EURO-EURIBOR-ACT/360_6M', 'EUR EURIBOR 6M', 'EURO-LIBOR-BBA_3M'],
+        'Day Count': ['ACT/360', 'ACT/ACT', 'ACT/365', '30E/360', '30B/360', 'ANNUAL', 'BUS/252', 'BUS/BUS', '30I/360', '30S/360', 'Day Count', 'ACT/361', 'ACT/ACT', 'ACT/366', '30E/361', '30B/361', 'ANNUAL', 'BUS/253', 'BUS/BUS', '30I/361', '30S/361'],
+        'Payment Frequency': ['Semi-annual', 'Biennially', 'Annually', 'Quarterly', 'Bimonthly', 'Monthly', 'Biweekly', 'Weekly', 'Daily', 'Bullet', '4-Weekly', 'Payment Frequency', 'Semi-annual', 'Biennially', 'Annually', 'Quarterly', 'Bimonthly', 'Monthly', 'Biweekly', 'Weekly', 'Daily', 'Bullet', '4-Weekly'],
+        'SWPN Underlying Index': ['USD-LIBOR-BBA_3M', 'EURO-EURIBOR-ACT/360_6M', 'EURO-EURIBOR-ACT/360_3M', 'EURO-LIBOR-BBA_6M', 'GBP-LIBOR-BBA_6M', 'ILS-TELBOR-REUTERS_3M', 'ZAR-JIBAR-SAFEX_3M', 'KRW.QM91DCD', 'JPY.SM6L', 'BRL.CDI', 'AUD.SM6BB', 'SWPN Underlying Index', 'USD-LIBOR-BBA_3M', 'EURO-EURIBOR-ACT/360_6M', 'EURO-EURIBOR-ACT/360_3M', 'EURO-LIBOR-BBA_6M', 'GBP-LIBOR-BBA_6M', 'ILS-TELBOR-REUTERS_3M', 'ZAR-JIBAR-SAFEX_3M', 'KRW.QM91DCD', 'JPY.SM6L', 'BRL.CDI', 'AUD.SM6BB'],
+        'SWPN Swap Type': ['Pay Fixed', 'Rcv Fixed', 'SWPN Swap Type', 'Pay Fixed', 'Rcv Fixed'],
+        'Account': [],
+        'Trader': [],
+        'Customer': [],
+        'Group': [],
+        'Legal Entity': [],
+        'Order Broker': [],
+        'ExpTimeZone': ['US/Eastern', 'Japan', 'Singapore', 'Hongkong', 'GMT', 'ROK', 'Brazil/East', 'GMT-11', 'ExpTimeZone', 'US/Eastern', 'Japan', 'Singapore', 'Hongkong', 'GMT', 'ROK', 'Brazil/East', 'GMT-12'],
+        'Pricing Mode': ['Investment Value', 'Swap Bond Floor', 'Pricing Mode', 'Investment Value', 'Swap Bond Floor'],
+        'O Type': ['OTC', 'O', 'O Type', 'OTC', 'O'],
+        'Position': ['Long Payer', 'Short Payer', 'Long Receiver', 'Short Receiver', 'Position', 'Long Payer', 'Short Payer', 'Long Receiver', 'Short Receiver'],
+        'Repo Type': ['Repo', 'Reverse Repo', 'Repo Type', 'Repo', 'Reverse Repo'],
+        'Fee Reset Type': ['Daily', 'Monthly', 'Quaterly', 'Odd Dates', 'Fee Reset Type', 'Daily', 'Monthly', 'Quaterly', 'Odd Dates'],
+        'Fee Pay Frequency': ['Monthly', 'Quaterly', 'At Maturity', 'Odd Dates', 'Fee Pay Frequency', 'Monthly', 'Quaterly', 'At Maturity', 'Odd Dates'],
+        'Fee Type': ['Fixed', 'Floating', 'Fee Type', 'Fixed', 'Floating'],
+        'Lend/Borrow': ['Lend', 'Borrow', 'Lend/Borrow', 'Lend', 'Borrow'],
+        'Accrual Type': ['Actual', 'Monthly', 'Accrual Type', 'Actual', 'Monthly'],
+        'Bond Identifier': ['ISIN', 'BBGID', 'Security', 'BB\xa0Ticker', 'BB\xa0Unique', 'Bond Identifier', 'ISIN', 'BBGID', 'Security', 'BB\xa0Ticker', 'BB\xa0Unique'],
+        'Quote Type': ['Spread', 'Percent Par', 'Upfront Points', 'In Default (% Par)', 'Quote Type', 'Spread', 'Percent Par', 'Upfront Points', 'In Default (% Par)'],
+        'Type of Repo': ['Loan Reduction', 'Collateral Increase', 'Points', 'Type of Repo', 'Loan Reduction', 'Collateral Increase', 'Points'],
+        'CDX Identifier': ['Security', 'Red Code', 'BBGID', 'CDX Identifier', 'Security', 'Red Code', 'BBGID'],
+        'Hold TimeZone': ['America/New_York', 'Australia/ACT', 'Australia/Broken_Hill', 'Australia/LHI', 'Australia/NSW', 'Australia/North', 'Australia/Queensland', 'Australia/South', 'Australia/Tasmania', 'Australia/Victoria', 'Australia/West', 'Australia/Yancowinna', 'Brazil/Acre', 'Brazil/DeNoronha', 'Brazil/East', 'Brazil/West', 'CET', 'CST6CDT', 'Canada/Atlantic', 'Canada/Central', 'Canada/East-Saskatchewan', 'Canada/Eastern', 'Canada/Mountain', 'Canada/Newfoundland', 'Canada/Pacific', 'Canada/Yukon', 'Chile/Continental', 'Chile/EasterIsland', 'Cuba', 'EET', 'EST', 'EST5EDT', 'Egypt', 'Eire', 'Etc/GMT', 'Etc/GMT+0', 'Etc/GMT+1', 'Hold TimeZone', 'America/New_York', 'Australia/ACT', 'Australia/Broken_Hill', 'Australia/LHI', 'Australia/NSW', 'Australia/North', 'Australia/Queensland', 'Australia/South', 'Australia/Tasmania', 'Australia/Victoria', 'Australia/West', 'Australia/Yancowinna', 'Brazil/Acre', 'Brazil/DeNoronha', 'Brazil/East', 'Brazil/West', 'CET', 'CST6CDT', 'Canada/Atlantic', 'Canada/Central', 'Canada/East-Saskatchewan', 'Canada/Eastern', 'Canada/Mountain', 'Canada/Newfoundland', 'Canada/Pacific', 'Canada/Yukon', 'GB', 'GB-Eire', 'GMT', 'GMT+0', 'GMT+1', 'GMT+10', 'GMT+11', 'GMT+12', 'GMT+13', 'GMT+2', 'GMT+3', 'GMT+4', 'GMT+5', 'GMT+6', 'GMT+7', 'GMT+8', 'GMT+9', 'GMT-0', 'GMT-1', 'GMT-10', 'GMT-11', 'GMT-12', 'GMT-2', 'GMT-3', 'GMT-4', 'GMT-5', 'GMT-6', 'GMT-7', 'GMT-8', 'GMT-9', 'Greenwich', 'HST', 'Hongkong', 'Iceland', 'Iran', 'Israel', 'Jamaica', 'Japan', 'Japan_TEST1', 'Kwajalein', 'Kyle Test', 'Libya', 'MET', 'MST', 'MST7MDT', 'Mexico/BajaNorte', 'Mexico/BajaSur', 'Mexico/General', 'Mumbai - India', 'NZ', 'NZ-CHAT', 'Navajo', 'OTCA', 'PRC', 'PST8PDT', 'Peterl', 'Poland', 'ROK', 'Singapore', 'Taiwan Testing', 'Turkey', 'UCT', 'US/Alaska', 'US/Aleutian', 'US/Arizona', 'US/Central', 'US/East-Indiana', 'US/Eastern', 'US/Hawaii', 'US/Michigan', 'US/Mountain', 'US/Pacific', 'US/Samoa', 'UTC', 'Universal', 'W-SU', 'WET', 'Zulu'],
+        'Deal Spread': ['25', '100', '300', '500', '750', '1000', 'Deal Spread', '1148.333333', '1349.047619', '1549.761905', '1750.47619', '1951.190476', '2151.904762'],
+        'CDS Month': ['20-Mar', '20-Jun', '20-Sep', '20-Dec', 'CDS Month', '20-Mar', '20-Jun', '20-Sep', '20-Dec'],
+        'First Coupon': ['Long', 'Short', 'First Coupon', 'Long', 'Short'],
+        'Seniority': ['SECDOM', 'SNRFOR', 'SUBLT2', 'JRSUBUT2', 'PREFT1', 'Seniority', 'SECDOM', 'SNRFOR', 'SUBLT3', 'JRSUBUT3', 'PREFT2'],
+        'CDS Freq': ['Annual', 'Semi Ann', 'Quarterly', 'Monthly', 'test', 'CDS Freq', 'Annual', 'Semi Ann', 'Quarterly', 'Monthly', 'test'],
+        'Restructuring': ['CR', 'MR', 'MM', 'XR', 'Restructuring', 'CR', 'MR', 'MM', 'XR'],
+        'Equities Identifier': ['Sedol', 'BBGID', 'Security', 'BB Ticker', 'BB\xa0Unique', 'Equities Identifier', 'Sedol', 'BBGID', 'Security', 'BB Ticker', 'BB\xa0Unique'],
+        'Derivs Identifier': ['BBGID', 'Security', 'BB Ticker', 'BB\xa0Unique', 'Derivs Identifier', 'BBGID', 'Security', 'BB Ticker', 'BB\xa0Unique'],
+        'Inflation Index': ['CPTFEMU Index', 'CPURNSA Index', 'FRCPXTOB Index', 'JCPNJGBI Index', 'ITCPI Index', 'SPIPC Index', 'UKRPI Index', 'UKRPCHVJ Index', 'CACPI Index', 'AUCPI Index', 'Inflation Index', 'CPTFEMU Index', 'CPURNSA Index', 'FRCPXTOB Index', 'JCPNJGBI Index', 'ITCPI Index', 'SPIPC Index', 'UKRPI Index', 'UKRPCHVJ Index', 'CACPI Index', 'AUCPI Index'],
+        'Interpolation': ['Linear (TIPS etc)', 'Log Linear (HFF etc)', 'Piecewise Const (UK)', 'Interpolation', 'Linear (TIPS etc)', 'Log Linear (HFF etc)', 'Piecewise Const (UK)'],
+        'Rounding': ['Standard', 'Banker', 'None', 'Rounding', 'Standard', 'Banker', 'None'],
+        'Calculation Basis': ['MMkt', 'Euro Quote', 'Disc Rate', 'BEY', 'Annual', 'Price($1)', 'Continuous', 'Actuarial', 'Calculation Basis', 'MMkt', 'Euro Quote', 'Disc Rate', 'BEY', 'Annual', 'Price($1)', 'Continuous', 'Actuarial'],
+        'Inflation Freq': ['Biennially', 'Annually', 'Sem-annual', 'Quarterly', 'Bimonthly', 'Monthly', 'Biweekly', 'Weekly', 'Daily', 'Custom', 'Inflation Freq', 'Biennially', 'Annually', 'Sem-annual', 'Quarterly', 'Bimonthly', 'Monthly', 'Biweekly', 'Weekly', 'Daily', 'Custom'],
+        'Roll': ['None', 'Following', 'Modified', 'Previous', 'Roll', 'None', 'Following', 'Modified', 'Previous'],
+        'Settle': ['Default', '1C Cash', '1D Phys', '2D Phys', '3D Phys', '4D Phys', '5D Phys', '0D Phys', '1D Cash', '2D Cash', '3D Cash', '4D Cash', '5D Cash', '0D Cash', 'RM Phys', 'RM Cash', '7D Phys', '7D Cash', '15D Phys', 'Settle', 'Default', '1C Cash', '1D Phys', '2D Phys', '3D Phys', '4D Phys', '5D Phys', '0D Phys', '1D Cash', '2D Cash', '3D Cash', '4D Cash', '5D Cash', '0D Cash', 'RM Phys', 'RM Cash', '7D Phys', '7D Cash', '15D Phys'],
+        'Term Type': ['Term Deal', 'Open-Ended Deal', 'Term Type', 'Term Deal', 'Open-Ended Deal'],
+        'ASCOT Identifier': ['ISIN', 'Security', 'BB Ticker', 'BBGID', 'BB Unique', 'Cusip', 'ASCOT Identifier', 'ISIN', 'Security', 'BB Ticker', 'BBGID', 'BB Unique', 'Cusip'],
+        'Discount Type': ['Curve', 'Percent', 'Discount Type', 'Curve', 'Percent'],
+        'CDSO Identifier': ['RED Code + Maturity', 'Security', 'CDSO Identifier', 'RED Code + Maturity', 'Security'],
+        'CDSO Tenor': ['3Y', '5Y', '7Y', '10Y', 'CDSO Tenor', '3Y', '5Y', '7Y', '10Y'],
+        'Strike Quote': ['Spread', 'Price', 'Strike Quote', 'Spread', 'Price'],
+        'Knock Out': ['Yes', 'No', 'Knock Out', 'Yes', 'No'],
+        'Forward Premium': ['Yes', 'No', 'Forward Premium', 'Yes', 'No'],
+        'Settlement': ['Cash', 'Physical', 'Settlement', 'Cash', 'Physical'],
+        'Settlement Style': ['Zero', 'Par/Adjusted', 'Par/Unadjusted', 'Settlement Style', 'Zero', 'Par/Adjusted', 'Par/Unadjusted'],
+        'Nominal Date Type': ['Fixing', 'Settle', 'Nominal Date Type', 'Fixing', 'Settle'],
+        'Forecast Period': ['No Gaps', 'From Index', 'Forecast Period', 'No Gaps', 'From Index'],
+        'Audit Status': ['PRICE', 'PEND', 'BOOK', 'AMND', 'Audit Status', 'PRICE', 'PEND', 'BOOK', 'AMND'],
+        'Market Quote': ['Basis Points', '% of Notional', 'Market Quote', 'Basis Points', '% of Notional'],
+        'ImpCash Source': ['Market', 'Yield Curve', 'Reference Bond', 'ImpCash Source', 'Market', 'Yield Curve', 'Reference Bond'],
+        'CFD Identifier': ['Sedol', 'Security', 'BB Ticker', 'BBGID', 'BB Unique', 'CFD Identifier', 'Sedol', 'Security', 'BB Ticker', 'BBGID', 'BB Unique'],
+        'Vol Days': ['Trading', 'Calendar', 'Vol Days', 'Trading', 'Calendar'],
+        'IntraDayTime': ['NONE', '24 HOUR', 'PARTIAL', 'INTERST DAYS', 'IntraDayTime', 'NONE', '25 HOUR', 'PARTIAL', 'INTERST DAYS'],
+        'VolLookupType': ['Normal', 'Use Strike Div', 'Use Curve USEC', 'VolLookupType', 'Normal', 'Use Strike Div', 'Use Curve USEC'],
+        'Expiry Rule': ['3rd Friday PM', 'All Friday AM', 'Major Month AM', 'Use Pricing Feed', 'All AM', 'All PM', 'Expiry Rule', '4th Friday PM', 'All Friday AM', 'Major Month AM', 'Use Pricing Feed', 'All AM', 'All PM'],
+        'B/A Spread Class': ['None', 'ISE', 'ISE_DECIMAL', 'Category 1', 'Category 2', 'Category 3', 'B/A Spread Class', 'None', 'ISE', 'ISE_DECIMAL', 'Category 4', 'Category 5', 'Category 6'],
+        'Funding Type': ['Fix', 'Float', 'Funding Type', 'Fix', 'Float'],
+        'TRS Pay Type': ['Fix', 'Float', 'Equity', 'TRS Pay Type', 'Fix', 'Float', 'Equity']
+    } 		 
+    
+    var config = {
+        "Accounts" : {
+            dataName: "Account",
+            field: "Code"
+        },
+                "Traders" : {
+            dataName: "Trader",
+            field: "Code"
+        },
+                "Customers" : {
+            dataName: "Customer",
+            field: "Code"
+        },
+                "Groups" : {
+            dataName: "Group",
+            field: "Code"
+        },
+                "Brokers" : {
+            dataName: "Order Broker",
+            field: "Code"
+        },
+                "Legal Entities" : {
+            dataName: "Legal Entity",
+            field: "Legal Entity Name"
+        },
+    }		  
+    
+    Object.keys(config).forEach(function(key) {
+        var tmp = referencedata.loadTable(key)
+        var search = tmp.find({})
+        for (var i = 0; i < search.rowCount && i < 50; i++) {
+    data[config[key].dataName].push(search.getValue(i, config[key].field))
+}	
+    })
+//var accounts = referencedata.loadTable('Accounts');
+//var accountsSearch = accounts.find({});
+//
+//for (var i = 0; i < accountsSearch.rowCount && i < 50; i++) {
+//    data.Account.push(accountsSearch.getValue(i, 'Code'))
+//}					  		
+//
+//var traders = referencedata.loadTable('Traders');
+//var tradersSearch = traders.find({});
+//
+//for (var i = 0; i < tradersSearch.rowCount&& i < 50; i++) {
+//    data.Trader.push(tradersSearch.getValue(i, 'Code'))
+//}											  
+//
+//var customers = referencedata.loadTable('Customers');
+//var customersSearch = customers.find({});
+//
+//for (var i = 0; i < customersSearch.rowCount&& i < 50; i++) {
+//    data.Customer.push(customersSearch.getValue(i, 'Code'))
+//}														 
+//
+//var groups = referencedata.loadTable('Groups');
+//var groupsSearch = groups.find({});
+//
+//for (var i = 0; i < groupsSearch.rowCount&& i < 50; i++) {
+//    data.Group.push(groupsSearch.getValue(i, 'Code'))
+//}													  
+//
+//var brokers = referencedata.loadTable('Brokers');
+//var brokersSearch = brokers.find({});
+//
+//for (var i = 0; i < brokersSearch.rowCount&& i < 50; i++) {
+//    data['Order Broker'].push(brokersSearch.getValue(i, 'Code'))
+//}		 
+//
+//var e = referencedata.loadTable('Legal Entities');
+//var es = e.find({});
+//
+//for (var i = 0; i < es.rowCount&& i < 50; i++) {
+//    data['Legal Entity'].push(es.getValue(i, 'Legal Entity Name'))
+//}
+
+//system.out.putTable("Broker List", tableSearch);
+//    data['Account']
+//    data['Trader']
+//    data['Customer']
+//    data['Group']
+//    data['Legal Entity']
+//        data['Order Broker']
+
+    
+    var res = [Object.keys(data)]	   
+    for (var i = 1; i < res[0].length; i++) {
+        var row = []
+        res[0].forEach(function(col) {
+            if (data[col].length - 1 < i) {
+                row.push('')
+            } else {
+
+                row.push(data[col][i])
+            }
+        })
+        res.push(row)
+    }
+
+    return res
+}
+
+//var table = referencedata.loadTable('Accounts');
+//var tableSearch = table.find({});
+//                           system.out.println(tableSearch.getValue(1, 'Code'))
+//system.out.putTable("Broker List", tableSearch);
+
+//getData()
+exports.getData = getData
