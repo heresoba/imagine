@@ -167,11 +167,11 @@ function getData() {
 
     
     var res = [Object.keys(data)]	   
-    for (var i = 1; i < res[0].length; i++) {
+    for (var i = 0; i < res[0].length; i++) {
         var row = []
         res[0].forEach(function(col) {
             if (data[col].length - 1 < i) {
-                row.push('')
+                row.push(null)
             } else {
 
                 row.push(data[col][i])
